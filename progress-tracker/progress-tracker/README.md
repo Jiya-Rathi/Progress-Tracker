@@ -15,3 +15,11 @@ A personal web app to track my daily coding, thesis, study, and application prog
 - React (Frontend)
 - Supabase (Backend and Auth)
 - Tailwind CSS (Styling)
+
+>>>>>>> 1ec7d6f015671d8363db833483bbf7da2f75d2e6
+>>>>>>>
+>>>>>>
+>>>>>
+>>>>
+>>>
+>>
