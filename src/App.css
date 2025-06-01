@@ -1,62 +1,121 @@
+/* App.css */
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background: #fdfaf5;
+  background-color: #ffffff;
   color: #222;
 }
 
-.page {
-  max-width: 1000px;
+.container {
+  max-width: 1400px;
   margin: 2rem auto;
   padding: 1rem;
-  text-align: center;
+}
+
+.calendar-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.calendar-column {
+  flex: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.sidebar-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  justify-content: flex-start;
+}
+
+.sidebar-box {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-height: 150px;
+  padding: 1rem;
+  font-size: 1rem;
+  color: #888;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1.5rem 0;
 }
 
 .calendar-title {
   font-family: 'Lora', serif;
-  font-size: 3rem;
-  margin: 0.2rem 0;
+  font-size: 2.5rem;
+  margin: 0;
+  color: #e67300;
 }
 
-.calendar-subtitle {
-  color: #777;
-  margin-bottom: 2rem;
+.nav-button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #e67300;
 }
 
-.calendar {
+.weekday-row {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
-  background: #e6e3dc;
-  border: 1px solid #e6e3dc;
-  border-radius: 12px;
-  overflow: hidden;
+  width: 100%;
+  margin-bottom: 0.5rem;
 }
 
 .weekday {
-  background: #f9f7f3;
-  font-weight: bold;
-  padding: 1rem 0;
-  font-size: 0.9rem;
-  border-bottom: 1px solid #e6e3dc;
+  text-align: center;
+  padding-bottom: 0.75rem;
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.weekday:nth-child(1),
+.weekday:nth-child(7) {
+  color: #e67300;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  width: 100%;
+  font-size: 1.1rem;
+  background-color: #ffffff;
+  border: none;
 }
 
 .day {
-  background: #fff;
-  min-height: 100px;
-  padding: 0.5rem;
+  background: #ffffff;
+  min-height: 130px;
+  padding: 0.75rem;
+  outline: 1px solid #999;
+  outline-offset: -1px;
   text-align: left;
-  border-top: 1px solid #e6e3dc;
-  border-left: 1px solid #e6e3dc;
   position: relative;
 }
 
 .day-number {
-  font-weight: bold;
-  color: #0a3e58;
+  font-weight: 500;
+  font-size: 1.2rem;
+  color: #222;
 }
 
-.day.empty {
-  background: transparent;
-  border: none;
+.day.empty .day-number {
+  color: #bbb;
+}
+
+.day.sunday .day-number,
+.day.saturday .day-number {
+  color: #e67300;
 }
