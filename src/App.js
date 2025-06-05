@@ -9,8 +9,21 @@ const monthNames = [
 
 function App() {
   const today = new Date();
-  const [year, setYear] = useState(today.getFullYear());
-  const [month, setMonth] = useState(today.getMonth());
+  const todayDate = today.getDate();
+  const todayMonth = today.getMonth();
+  const todayYear = today.getFullYear();
+
+  const [year, setYear] = useState(todayYear);
+  const [month, setMonth] = useState(todayMonth);
+  const [entries, setEntries] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [formData, setFormData] = useState({
+    coding: '',
+    thesis: '',
+    studies: '',
+    project: '',
+  });
 
   const firstDayOfMonth = new Date(year, month, 1);
   const startingDay = firstDayOfMonth.getDay();
@@ -35,38 +48,62 @@ function App() {
     }
   };
 
+  const openModal = (day, type = 'current') => {
+    const dateKey = type === 'prev'
+      ? new Date(year, month - 1, day).toDateString()
+      : type === 'next'
+      ? new Date(year, month + 1, day).toDateString()
+      : new Date(year, month, day).toDateString();
+    setSelectedDate(dateKey);
+    setFormData(entries[dateKey] || { coding: '', thesis: '', studies: '', project: '' });
+    setModalOpen(true);
+  };
+
+  const saveEntry = () => {
+    setEntries({ ...entries, [selectedDate]: formData });
+    setModalOpen(false);
+  };
+
   const dayCells = [];
 
-  // Previous month days
   for (let i = startingDay - 1; i >= 0; i--) {
     const prevDay = daysInPrevMonth - i;
     dayCells.push(
-      <div className="day empty" key={`prev-${prevDay}`}>
+      <div className="day empty" key={`prev-${prevDay}`} onClick={() => openModal(prevDay, 'prev')}>
         <div className="day-number">{prevDay}</div>
       </div>
     );
   }
 
-  // Current month days
   for (let d = 1; d <= daysInMonth; d++) {
     const dayOfWeek = (startingDay + d - 1) % 7;
     const isSunday = dayOfWeek === 0;
     const isSaturday = dayOfWeek === 6;
-    const dayClass = `day${isSunday ? ' sunday' : ''}${isSaturday ? ' saturday' : ''}`;
+    const isToday = d === todayDate && month === todayMonth && year === todayYear;
+    const dayClass = `day${isSunday ? ' sunday' : ''}${isSaturday ? ' saturday' : ''}${isToday ? ' today' : ''}`;
+    const dateKey = new Date(year, month, d).toDateString();
+    const entry = entries[dateKey];
 
     dayCells.push(
-      <div className={dayClass} key={d}>
+      <div className={dayClass} key={d} onClick={() => openModal(d)}>
         <div className="day-number">{d}</div>
+        {entry && (
+          <div className="entry-preview">
+            <div>Coding: {entry.coding}</div>
+            <div>Thesis: {entry.thesis}</div>
+            <div>Studies: {entry.studies}</div>
+            <div>Project: {entry.project}</div>
+          </div>
+        )}
       </div>
     );
   }
 
-  // Next month filler days
   const totalDisplayed = dayCells.length;
   const remaining = 42 - totalDisplayed;
   for (let i = 1; i <= remaining; i++) {
     dayCells.push(
-      <div className="day empty" key={`next-${i}`}>
+      <div className="day empty" key={`next-${i}`} onClick={() => openModal(i, 'next')}>
         <div className="day-number">{i}</div>
       </div>
     );
@@ -82,14 +119,12 @@ function App() {
             <button onClick={goToNextMonth} className="nav-button">❯</button>
           </div>
 
-          {/* Weekday row */}
           <div className="weekday-row">
             {weekdays.map((day, index) => (
               <div className="weekday" key={index}>{day}</div>
             ))}
           </div>
 
-          {/* Calendar grid */}
           <div className="calendar-grid">
             {dayCells}
           </div>
@@ -99,6 +134,34 @@ function App() {
           {/* Sidebar content can be added later */}
         </div>
       </div>
+
+      {modalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Entry for {selectedDate}</h2>
+            <label>
+              Coding Questions Done:
+              <input value={formData.coding} onChange={(e) => setFormData({ ...formData, coding: e.target.value })} />
+            </label>
+            <label>
+              Thesis Contribution:
+              <input value={formData.thesis} onChange={(e) => setFormData({ ...formData, thesis: e.target.value })} />
+            </label>
+            <label>
+              Studies:
+              <input value={formData.studies} onChange={(e) => setFormData({ ...formData, studies: e.target.value })} />
+            </label>
+            <label>
+              Project Work:
+              <input value={formData.project} onChange={(e) => setFormData({ ...formData, project: e.target.value })} />
+            </label>
+            <div className="modal-actions" style={{ justifyContent: 'space-between', flexDirection: 'row-reverse' }}>
+  <button onClick={saveEntry}>Save</button>
+  <button onClick={() => setModalOpen(false)}>Cancel</button>
+</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
