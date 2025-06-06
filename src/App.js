@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import lofiBanner from './assets/lofi-girl.gif';
 
 const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const monthNames = [
@@ -111,6 +112,10 @@ function App() {
 
   return (
     <div className="container">
+      <div className="banner-strip">
+        <img src={lofiBanner} alt="Lofi Banner" className="banner-gif" />
+      </div>
+
       <div className="calendar-layout">
         <div className="calendar-column">
           <div className="calendar-header">
@@ -134,6 +139,10 @@ function App() {
           {/* Sidebar content can be added later */}
         </div>
       </div>
+    <div style={{ height: '400px', backgroundColor: '#123c5b', marginTop: '2rem' }}>
+  <h2 style={{ color: 'white', textAlign: 'center' }}>Coming Soon: Events & To-Do</h2>
+</div>
+
 
       {modalOpen && (
         <div className="modal-overlay">
@@ -156,12 +165,16 @@ function App() {
               <input value={formData.project} onChange={(e) => setFormData({ ...formData, project: e.target.value })} />
             </label>
             <div className="modal-actions" style={{ justifyContent: 'space-between', flexDirection: 'row-reverse' }}>
-  <button onClick={saveEntry}>Save</button>
-  <button onClick={() => setModalOpen(false)}>Cancel</button>
-</div>
+              <button onClick={saveEntry}>Save</button>
+              <button onClick={() => setModalOpen(false)}>Cancel</button>
+            </div>
           </div>
         </div>
       )}
+      <button className="add-event-button" onClick={() => alert("Open event creation modal here")}>
+  +
+</button>
+
     </div>
   );
 }
