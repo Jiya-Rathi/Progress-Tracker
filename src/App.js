@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import lofiBanner from './assets/lofi-girl.gif';
+import CalendarEntryModal from './components/CalendarEntryModal';
+import EventFormModal from './components/EventFormModal';
 
 const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const monthNames = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
+
+const emojiMap = {
+  flight: '✈️',
+  rent: '🏠',
+  submission: '📄',
+  outing: '🎉',
+  call: '📞',
+  other: '📝'
+};
 
 function App() {
   const today = new Date();
@@ -19,12 +30,24 @@ function App() {
   const [entries, setEntries] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [formData, setFormData] = useState({
-    coding: '',
-    thesis: '',
-    studies: '',
-    project: '',
+  const [formData, setFormData] = useState({});
+
+  const [eventModalOpen, setEventModalOpen] = useState(false);
+  const [eventForm, setEventForm] = useState({
+    title: '',
+    date: '',
+    type: '',
+    notes: ''
   });
+
+  const [events, setEvents] = useState({});
+  const [hoveredEvent, setHoveredEvent] = useState(null);
+
+  useEffect(() => {
+    const handleClickOutside = () => setHoveredEvent(null);
+    window.addEventListener('click', handleClickOutside);
+    return () => window.removeEventListener('click', handleClickOutside);
+  }, []);
 
   const firstDayOfMonth = new Date(year, month, 1);
   const startingDay = firstDayOfMonth.getDay();
@@ -53,16 +76,33 @@ function App() {
     const dateKey = type === 'prev'
       ? new Date(year, month - 1, day).toDateString()
       : type === 'next'
-      ? new Date(year, month + 1, day).toDateString()
-      : new Date(year, month, day).toDateString();
+        ? new Date(year, month + 1, day).toDateString()
+        : new Date(year, month, day).toDateString();
     setSelectedDate(dateKey);
-    setFormData(entries[dateKey] || { coding: '', thesis: '', studies: '', project: '' });
+    setFormData(entries[dateKey] || {});
     setModalOpen(true);
   };
 
   const saveEntry = () => {
     setEntries({ ...entries, [selectedDate]: formData });
     setModalOpen(false);
+  };
+
+  const saveEvent = () => {
+    const { date, type, title, notes } = eventForm;
+    if (!date || !type) return;
+
+    const [inputYear, inputMonth, inputDay] = date.split('-').map(Number);
+    const localDate = new Date(inputYear, inputMonth - 1, inputDay);
+    const dateKey = localDate.toDateString();
+
+    setEvents(prev => {
+      const updated = [...(prev[dateKey] || []), { title, type, notes }];
+      return { ...prev, [dateKey]: updated };
+    });
+
+    setEventModalOpen(false);
+    setEventForm({ title: '', date: '', type: '', notes: '' });
   };
 
   const dayCells = [];
@@ -84,24 +124,52 @@ function App() {
     const dayClass = `day${isSunday ? ' sunday' : ''}${isSaturday ? ' saturday' : ''}${isToday ? ' today' : ''}`;
     const dateKey = new Date(year, month, d).toDateString();
     const entry = entries[dateKey];
+    const dayEvents = events[dateKey] || [];
 
     dayCells.push(
       <div className={dayClass} key={d} onClick={() => openModal(d)}>
         <div className="day-number">{d}</div>
+
+        <div className="event-emojis">
+          {dayEvents.map((event, idx) => (
+            <span
+              key={idx}
+              className="event-emoji"
+              onClick={(e) => {
+                e.stopPropagation();
+                setHoveredEvent({
+                  dateKey,
+                  eventIndex: idx,
+                  ...event
+                });
+              }}
+            >
+              {emojiMap[event.type] || '🗓️'}
+            </span>
+          ))}
+        </div>
+
+        {hoveredEvent?.dateKey === dateKey && (
+          <div className="event-popup" onClick={(e) => e.stopPropagation()}>
+            <div className="popup-title">{hoveredEvent.title}</div>
+            {hoveredEvent.notes && <div className="popup-notes">{hoveredEvent.notes}</div>}
+            <button className="popup-close" onClick={() => setHoveredEvent(null)}>×</button>
+          </div>
+        )}
+
         {entry && (
           <div className="entry-preview">
-            <div>Coding: {entry.coding}</div>
-            <div>Thesis: {entry.thesis}</div>
-            <div>Studies: {entry.studies}</div>
-            <div>Project: {entry.project}</div>
+            <div>Coding: {entry.coding?.questions_solved ?? '-'}</div>
+            <div>Thesis: {entry.thesis?.contribution_score ?? '-'}</div>
+            <div>Studies: {entry.studies?.study_score ?? '-'}</div>
+            <div>Project: {entry.projects?.contribution_score ?? '-'}</div>
           </div>
         )}
       </div>
     );
   }
 
-  const totalDisplayed = dayCells.length;
-  const remaining = 42 - totalDisplayed;
+  const remaining = 42 - dayCells.length;
   for (let i = 1; i <= remaining; i++) {
     dayCells.push(
       <div className="day empty" key={`next-${i}`} onClick={() => openModal(i, 'next')}>
@@ -136,45 +204,40 @@ function App() {
         </div>
 
         <div className="sidebar-column">
-          {/* Sidebar content can be added later */}
+          {/* Reserved for Sidebar Content */}
         </div>
       </div>
-    <div style={{ height: '400px', backgroundColor: '#123c5b', marginTop: '2rem' }}>
-  <h2 style={{ color: 'white', textAlign: 'center' }}>Coming Soon: Events & To-Do</h2>
-</div>
 
+      <div style={{ height: '400px', backgroundColor: '#123c5b', marginTop: '2rem' }}>
+        <h2 style={{ color: 'white', textAlign: 'center' }}>Coming Soon: Events & To-Do</h2>
+      </div>
 
       {modalOpen && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Entry for {selectedDate}</h2>
-            <label>
-              Coding Questions Done:
-              <input value={formData.coding} onChange={(e) => setFormData({ ...formData, coding: e.target.value })} />
-            </label>
-            <label>
-              Thesis Contribution:
-              <input value={formData.thesis} onChange={(e) => setFormData({ ...formData, thesis: e.target.value })} />
-            </label>
-            <label>
-              Studies:
-              <input value={formData.studies} onChange={(e) => setFormData({ ...formData, studies: e.target.value })} />
-            </label>
-            <label>
-              Project Work:
-              <input value={formData.project} onChange={(e) => setFormData({ ...formData, project: e.target.value })} />
-            </label>
-            <div className="modal-actions" style={{ justifyContent: 'space-between', flexDirection: 'row-reverse' }}>
-              <button onClick={saveEntry}>Save</button>
-              <button onClick={() => setModalOpen(false)}>Cancel</button>
-            </div>
-          </div>
-        </div>
+        <CalendarEntryModal
+          selectedDate={selectedDate}
+          formData={formData}
+          setFormData={setFormData}
+          onSave={saveEntry}
+          onClose={() => setModalOpen(false)}
+        />
       )}
-      <button className="add-event-button" onClick={() => alert("Open event creation modal here")}>
-  +
-</button>
 
+      {eventModalOpen && (
+        <EventFormModal
+          eventForm={eventForm}
+          setEventForm={setEventForm}
+          onSave={saveEvent}
+          onClose={() => setEventModalOpen(false)}
+        />
+      )}
+
+      <button
+        type="button"
+        className="add-event-button"
+        onClick={() => setEventModalOpen(true)}
+      >
+        +
+      </button>
     </div>
   );
 }
