@@ -58,7 +58,7 @@ body {
 /* Calendar layout */
 .calendar-layout {
   display: flex;
-  gap: 2rem;
+  gap: 3rem;
   align-items: flex-start;
 }
 
@@ -75,7 +75,9 @@ body {
   flex-direction: column;
   gap: 2rem;
   justify-content: flex-start;
+  margin-top: 6rem; /* ⬅️ aligns with calendar grid */
 }
+
 
 .sidebar-box {
   border: 1px solid #ddd;
@@ -141,6 +143,9 @@ body {
   font-size: 1.1rem;
   background-color: #071a2a;
   border: none;
+  border-radius: 16px; /* or try 12px / 20px based on taste */
+  overflow: hidden; /* ensures inner content respects the curve */
+
 }
 
 /* Days */
@@ -459,6 +464,25 @@ body {
   from { opacity: 0; transform: scale(0.98); }
   to   { opacity: 1; transform: scale(1); }
 }
+
+.animated-star {
+  animation: popStar 0.8s ease-in-out;
+}
+
+@keyframes popStar {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 
 
 

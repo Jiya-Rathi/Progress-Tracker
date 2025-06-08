@@ -1,0 +1,199 @@
+.todo-board {
+  background: #0d253c;
+  border: 1px solid #e67300;
+  border-radius: 12px;
+  padding: 1rem;
+  color: white;
+  font-family: 'Lora', serif;
+  max-height: 600px;
+  overflow-y: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.todo-header {
+  font-size: 1.4rem;
+  color: #e67300;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.todo-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.todo-inputs input[type='text'],
+.todo-inputs input[type='date'] {
+  background: #071a2a;
+  border: 1px solid #ccc;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+}
+
+.todo-inputs button {
+  background: rgba(230, 115, 0, 0.25);
+  border: 1px solid #e67300;
+  color: white;
+  padding: 0.4rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.todo-inputs button:hover {
+  background: rgba(230, 115, 0, 0.4);
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.todo-list li.done .todo-text {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.todo-text {
+  flex: 1;
+}
+
+.due-date {
+  font-size: 0.8rem;
+  color: #e9d8fc;
+}
+
+.delete {
+  background: none;
+  border: none;
+  color: #e67300;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.todo-board.refined {
+  margin-top: 2.8rem;
+  background: #0d253c;
+  border: 1px solid #e67300;
+  border-radius: 12px;
+  padding: 1rem;
+  color: white;
+  font-family: 'Lora', serif;
+  max-height: 600px;
+  overflow-y: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  /** 🔽 ADD or MODIFY this line to control width */
+  width: 280px; /* or try 300px, 350px etc. */
+}
+
+
+.todo-header {
+  font-size: 1.4rem;
+  color: #e67300;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.todo-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.todo-inputs input[type='text'],
+.todo-inputs input[type='date'] {
+  background: #071a2a;
+  border: 1px solid #e9d8fc;
+  color: #e9d8fc;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+}
+
+.todo-inputs button {
+  background: rgba(230, 115, 0, 0.25);
+  border: 1px solid #e67300;
+  color: white;
+  padding: 0.4rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.todo-inputs button:hover {
+  background: rgba(230, 115, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.todo-list li.done .todo-text {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.todo-text {
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+.due-date {
+  font-size: 0.8rem;
+  color: #e9d8fc;
+  white-space: nowrap;
+}
+
+.delete {
+  background: none;
+  border: none;
+  color: #e67300;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.clear-completed {
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background-color: rgba(230, 115, 0, 0.15);
+  border: 1px solid rgba(230, 115, 0, 0.8);
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.clear-completed:hover {
+  background-color: rgba(230, 115, 0, 0.3);
+}
+
+

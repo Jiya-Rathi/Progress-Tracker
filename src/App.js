@@ -3,6 +3,7 @@ import './App.css';
 import lofiBanner from './assets/lofi-girl.gif';
 import CalendarEntryModal from './components/CalendarEntryModal';
 import EventFormModal from './components/EventFormModal';
+import TodoBoard from './components/TodoBoard';
 
 const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const monthNames = [
@@ -31,22 +32,23 @@ function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [formData, setFormData] = useState({});
-
   const [eventModalOpen, setEventModalOpen] = useState(false);
-  const [eventForm, setEventForm] = useState({
-    title: '',
-    date: '',
-    type: '',
-    notes: ''
-  });
-
+  const [eventForm, setEventForm] = useState({ title: '', date: '', type: '', notes: '' });
   const [events, setEvents] = useState({});
   const [hoveredEvent, setHoveredEvent] = useState(null);
+  const [todos, setTodos] = useState([]);
 
   useEffect(() => {
     const handleClickOutside = () => setHoveredEvent(null);
     window.addEventListener('click', handleClickOutside);
     return () => window.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const storedTodos = localStorage.getItem('todos');
+    if (storedTodos) {
+      setTodos(JSON.parse(storedTodos));
+    }
   }, []);
 
   const firstDayOfMonth = new Date(year, month, 1);
@@ -122,13 +124,31 @@ function App() {
     const isSaturday = dayOfWeek === 6;
     const isToday = d === todayDate && month === todayMonth && year === todayYear;
     const dayClass = `day${isSunday ? ' sunday' : ''}${isSaturday ? ' saturday' : ''}${isToday ? ' today' : ''}`;
-    const dateKey = new Date(year, month, d).toDateString();
+    const dateObj = new Date(year, month, d);
+    const dateKey = dateObj.toDateString();
+    const isoKey = dateObj.toISOString().split('T')[0];
     const entry = entries[dateKey];
     const dayEvents = events[dateKey] || [];
+
+    const dueToday = todos.filter(todo => todo.dueDate === isoKey);
+    const allDoneOnTime =
+      dueToday.length > 0 &&
+      dueToday.every(todo => {
+        if (!todo.done || !todo.completedDate) return false;
+        const completed = new Date(todo.completedDate);
+        const due = new Date(todo.dueDate);
+        return completed <= due;
+      });
 
     dayCells.push(
       <div className={dayClass} key={d} onClick={() => openModal(d)}>
         <div className="day-number">{d}</div>
+
+        {allDoneOnTime && (
+          <div className="animated-star" style={{ position: 'absolute', bottom: 6, left: 6, fontSize: '1rem' }}>
+            ✨
+          </div>
+        )}
 
         <div className="event-emojis">
           {dayEvents.map((event, idx) => (
@@ -137,11 +157,7 @@ function App() {
               className="event-emoji"
               onClick={(e) => {
                 e.stopPropagation();
-                setHoveredEvent({
-                  dateKey,
-                  eventIndex: idx,
-                  ...event
-                });
+                setHoveredEvent({ dateKey, eventIndex: idx, ...event });
               }}
             >
               {emojiMap[event.type] || '🗓️'}
@@ -204,12 +220,12 @@ function App() {
         </div>
 
         <div className="sidebar-column">
-          {/* Reserved for Sidebar Content */}
+          <TodoBoard />
         </div>
       </div>
 
       <div style={{ height: '400px', backgroundColor: '#123c5b', marginTop: '2rem' }}>
-        <h2 style={{ color: 'white', textAlign: 'center' }}>Coming Soon: Events & To-Do</h2>
+        <h2 style={{ color: 'white', textAlign: 'center' }}>Coming Soon: Analytics Dash Board</h2>
       </div>
 
       {modalOpen && (
