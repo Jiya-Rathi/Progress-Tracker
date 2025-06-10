@@ -44,11 +44,28 @@ function App() {
     return () => window.removeEventListener('click', handleClickOutside);
   }, []);
 
+  // Load todos from localStorage and set up periodic refresh
   useEffect(() => {
-    const storedTodos = localStorage.getItem('todos');
-    if (storedTodos) {
-      setTodos(JSON.parse(storedTodos));
-    }
+    const loadTodos = () => {
+      const storedTodos = localStorage.getItem('todos');
+      if (storedTodos) {
+        setTodos(JSON.parse(storedTodos));
+      }
+    };
+
+    // Load initially
+    loadTodos();
+
+    // Set up interval to sync with localStorage changes
+    const interval = setInterval(loadTodos, 1000);
+
+    // Also listen for storage events
+    window.addEventListener('storage', loadTodos);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', loadTodos);
+    };
   }, []);
 
   const firstDayOfMonth = new Date(year, month, 1);
@@ -130,6 +147,7 @@ function App() {
     const entry = entries[dateKey];
     const dayEvents = events[dateKey] || [];
 
+    // Fixed logic for animated stars
     const dueToday = todos.filter(todo => todo.dueDate === isoKey);
     const allDoneOnTime =
       dueToday.length > 0 &&
@@ -140,12 +158,24 @@ function App() {
         return completed <= due;
       });
 
+    console.log(`Date: ${isoKey}, TODOs due: ${dueToday.length}, All done on time: ${allDoneOnTime}`); // Debug log
+
     dayCells.push(
       <div className={dayClass} key={d} onClick={() => openModal(d)}>
         <div className="day-number">{d}</div>
 
         {allDoneOnTime && (
-          <div className="animated-star" style={{ position: 'absolute', bottom: 6, left: 6, fontSize: '1rem' }}>
+          <div 
+            className="animated-star" 
+            style={{ 
+              position: 'absolute', 
+              bottom: 6, 
+              left: 6, 
+              fontSize: '1.2rem',
+              animation: 'sparkle 2s ease-in-out infinite',
+              zIndex: 10
+            }}
+          >
             ✨
           </div>
         )}

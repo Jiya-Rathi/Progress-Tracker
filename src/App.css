@@ -142,11 +142,11 @@ body {
   width: 100%;
   font-size: 1.1rem;
   background-color: #071a2a;
-  border: none;
-  border-radius: 16px; /* or try 12px / 20px based on taste */
-  overflow: hidden; /* ensures inner content respects the curve */
-
+  border: 2px solid #e9d8fc;       /* ✅ Add visible border */
+  border-radius: 16px;             /* ✅ Rounded corners */
+  overflow: hidden;                /* ✅ Clip inner content to curve */
 }
+
 
 /* Days */
 .day {
