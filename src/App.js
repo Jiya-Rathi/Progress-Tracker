@@ -57,9 +57,9 @@ function App() {
     loadTodos();
 
     // Set up interval to sync with localStorage changes
-    const interval = setInterval(loadTodos, 1000);
+    const interval = setInterval(loadTodos, 1000); // Check every second
 
-    // Also listen for storage events
+    // Also listen for storage events (though they don't fire within same tab)
     window.addEventListener('storage', loadTodos);
 
     return () => {
